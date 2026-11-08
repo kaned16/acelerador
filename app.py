@@ -24,6 +24,7 @@ st.markdown("""
     /* Ocultar elementos predeterminados de Streamlit que rompen la estética limpia */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+    header {visibility: hidden;}
     
     /* Estilos de tipografía y títulos */
     h1, h2, h3 {
@@ -64,34 +65,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Configuración de la API Key de Gemini
-API_KEY = "AIzaSyDLETiXyT5p3hrxzPBFo_UUNaIIpVUPb4U"
+# ⚠️ COLOCA AQUÍ TU NUEVA API KEY GENERADA EN GOOGLE AI STUDIO
+API_KEY = "PEGA_AQUI_TU_NUEVA_API_KEY"
 genai.configure(api_key=API_KEY)
 
-# Header Superior Estilizado
+# Título y Subtítulo directos al inicio de la página
 st.markdown("""
-<div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.5rem; border-bottom: 1px solid #1f2937; margin-bottom: 1.5rem;">
-    <div style="display: flex; align-items: center; gap: 0.75rem;">
-        <div style="width: 2.5rem; height: 2.5rem; border-radius: 0.75rem; background: linear-gradient(to top right, #7c3aed, #818cf8); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);">
-            ✨
-        </div>
-        <div>
-            <h1 style="font-size: 1.125rem; font-weight: bold; margin: 0; background: linear-gradient(to right, #ffffff, #9ca3af, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Cuarto Espacio | Oratoria AI</h1>
-            <p style="font-size: 0.75rem; color: #9ca3af; margin: 0;">Análisis Multimodal de Discursos, Gestos y Persuasión</p>
-        </div>
-    </div>
-    <div>
-        <span style="display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; background-color: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2);">
-            <span style="width: 0.375rem; height: 0.375rem; border-radius: 9999px; background-color: #34d399; margin-right: 0.375rem; display: inline-block;"></span>
-            API Gemini Conectada
-        </span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# Título y Subtítulo compactos (sin la etiqueta superior)
-st.markdown("""
-<div style="text-align: center; max-width: 48rem; margin: 0 auto 1.5rem auto;">
+<div style="text-align: center; max-width: 48rem; margin: 1.5rem auto 1.5rem auto;">
     <h2 style="font-size: 2rem; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 0.5rem;">Evalúa tu oratoria con precisión de experto</h2>
     <p style="color: #9ca3af; font-size: 0.95rem;">Sube un video de tu intervención para calcular automáticamente las marcas de tiempo exactas según su duración real.</p>
 </div>
