@@ -160,7 +160,13 @@ if video_to_process is not None:
             with st.spinner("Subiendo video y analizando a profundidad con Gemini..."):
                 remote_file = None
                 try:
-                    temp_path = os.path.join("/tmp", getattr(video_to_process, "name", "video_grabado.mp4"))
+                    # Limpiar el nombre del archivo para que no tenga caracteres especiales ni ellipsis (..)
+                    raw_name = getattr(video_to_process, "name", "video_grabado.mp4")
+                    safe_filename = "".join(c for c in raw_name if ord(c) < 128 and c not in '/\\?%*:|"<>')
+                    if not safe_filename:
+                        safe_filename = "video_grabado.mp4"
+                        
+                    temp_path = os.path.join("/tmp", safe_filename)
                     with open(temp_path, "wb") as f:
                         f.write(video_to_process.getbuffer())
 
@@ -206,9 +212,10 @@ if video_to_process is not None:
                     st.markdown(response.text)
                     
                 except Exception as e:
-                    # Proteccion estricta contra errores de codificacion de caracteres
-                    error_msg = str(e).encode('utf-8', errors='ignore').decode('utf-8')
-                    st.error(f"Error de procesamiento: {error_msg}")
+                    # Forzar conversión estricta a caracteres puramente seguros para evitar error ascii codec
+                    error_str = str(e)
+                    clean_error = "".join(c if ord(c) < 128 else ' ' for c in error_str)
+                    st.error(f"Error de procesamiento: {clean_error}")
                     
                 finally:
                     if remote_file:
