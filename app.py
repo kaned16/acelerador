@@ -25,15 +25,6 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* Tarjetas y contenedores con estilo glassmorphism oscuro y bordes sutiles */
-    .custom-card {
-        background-color: #111827;
-        border: 1px solid #1f2937;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    }
-    
     /* Estilos de tipografía y títulos */
     h1, h2, h3 {
         color: #f9fafb !important;
@@ -79,7 +70,7 @@ genai.configure(api_key=API_KEY)
 
 # Header Superior Estilizado
 st.markdown("""
-<div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.5rem; border-bottom: 1px solid #1f2937; margin-bottom: 2rem;">
+<div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.5rem; border-bottom: 1px solid #1f2937; margin-bottom: 1.5rem;">
     <div style="display: flex; align-items: center; gap: 0.75rem;">
         <div style="width: 2.5rem; height: 2.5rem; border-radius: 0.75rem; background: linear-gradient(to top right, #7c3aed, #818cf8); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);">
             ✨
@@ -98,18 +89,15 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Contenedor Principal / Vista de Carga
+# Título y Subtítulo compactos (sin la etiqueta superior)
 st.markdown("""
-<div style="text-align: center; max-width: 48rem; margin: 0 auto 2rem auto; padding-top: 1rem;">
-    <span style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; background-color: rgba(139, 92, 246, 0.1); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.2); margin-bottom: 1rem;">
-        ⚡ Motor Multimodal Nativo con Duración Dinámica
-    </span>
-    <h2 style="font-size: 2.25rem; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 0.75rem;">Evalúa tu oratoria con precisión de experto</h2>
-    <p style="color: #9ca3af; font-size: 1rem;">Sube un video de tu intervención para calcular automáticamente las marcas de tiempo exactas según su duración real.</p>
+<div style="text-align: center; max-width: 48rem; margin: 0 auto 1.5rem auto;">
+    <h2 style="font-size: 2rem; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 0.5rem;">Evalúa tu oratoria con precisión de experto</h2>
+    <p style="color: #9ca3af; font-size: 0.95rem;">Sube un video de tu intervención para calcular automáticamente las marcas de tiempo exactas según su duración real.</p>
 </div>
 """, unsafe_allow_html=True)
 
-# Sección de Carga de Archivo con la Estética Solicitada
+# Sección de Carga de Archivo visible de inmediato
 video_file = st.file_uploader("Arrastra tu video aquí o explora archivos", type=["mp4", "mov", "webm"])
 
 if video_file is not None:
@@ -158,12 +146,12 @@ if video_file is not None:
                         pass
 else:
     st.markdown("""
-    <div style="background-color: #111827; border: 1px solid #1f2937; border-radius: 1rem; padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; max-width: 48rem; margin: 2rem auto 0 auto;">
+    <div style="background-color: #111827; border: 1px solid #1f2937; border-radius: 1rem; padding: 1rem; display: flex; align-items: center; justify-content: space-between; max-width: 48rem; margin: 1.5rem auto 0 auto;">
         <div>
             <div style="font-size: 0.75rem; font-weight: 600; color: #d1d5db;">¿Deseas probar una demostración inmediata?</div>
             <div style="font-size: 0.6875rem; color: #6b7280;">Carga un video de prueba con sincronización perfecta</div>
         </div>
-        <span style="background-color: #1f2937; color: #e5e7eb; font-size: 0.75rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.75rem; border: 1px solid #374151;">
+        <span style="background-color: #1f2937; color: #e5e7eb; font-size: 0.75rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.75rem; border: 1px solid #374151;">
             Sube un video arriba 👆
         </span>
     </div>
