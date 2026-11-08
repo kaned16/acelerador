@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS avanzados para unificar la estética y centrar las pestañas horizontalmente
+# Estilos CSS avanzados para unificar la estética y centrar elementos
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -27,7 +27,7 @@ st.markdown("""
         max-width: 55rem !important;
     }
     
-    /* Ocultar elementos predeterminados */
+    /* Ocultar elementos predeterminados de Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
@@ -39,7 +39,7 @@ st.markdown("""
         font-weight: 700;
     }
     
-    /* Botones personalizados con gradiente morado de marca */
+    /* Botones principales personalizados con gradiente morado de marca */
     .stButton>button {
         background: linear-gradient(to right, #7c3aed, #8b5cf6) !important;
         color: white !important;
@@ -68,33 +68,6 @@ st.markdown("""
     div[data-testid="stFileUploader"]:hover {
         border-color: #8b5cf6;
     }
-    
-    /* CENTRAR LAS PESTAÑAS HORIZONTALMENTE Y DARLES ESTILO OSCURO */
-    div[data-baseweb="tab-list"] {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        background-color: #111827;
-        padding: 0.5rem;
-        border-radius: 1rem;
-        border: 1px solid #1f2937;
-        margin-bottom: 1.5rem;
-    }
-    
-    div[data-baseweb="tab"] {
-        background-color: transparent !important;
-        border-radius: 0.75rem !important;
-        color: #9ca3af !important;
-        font-weight: 600 !important;
-        font-size: 0.85rem !important;
-        padding: 0.5rem 1.25rem !important;
-    }
-    
-    div[data-testid="stacionales"] div[data-baseweb="tab"] [aria-selected="true"],
-    div[data-baseweb="tab"][aria-selected="true"] {
-        background-color: #1f2937 !important;
-        color: #ffffff !important;
-    }
 
     /* Restringir tamaño del preview del video */
     div[data-testid="stVideo"] {
@@ -122,27 +95,49 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Pestañas de Selección de Entrada (Centradas horizontalmente con CSS)
-tab_upload, tab_record, tab_youtube = st.tabs(["📁 Subir Archivo", "🎥 Grabar Video", "▶️ Enlace de YouTube"])
+# Control de estado para las opciones de entrada
+if "input_mode" not in st.session_state:
+    st.session_state["input_mode"] = "upload"
+
+# Selector de opciones centrado horizontalmente con botones limpios tipo píldora
+col_space1, col_btn1, col_btn2, col_btn3, col_space2 = st.columns([1, 2, 2, 2, 1])
+
+with col_btn1:
+    if st.button("📁 Subir Archivo", key="btn_upload"):
+        st.session_state["input_mode"] = "upload"
+        st.rerun()
+
+with col_btn2:
+    if st.button("🎥 Grabar Video", key="btn_record"):
+        st.session_state["input_mode"] = "record"
+        st.rerun()
+
+with col_btn3:
+    if st.button("▶️ YouTube", key="btn_youtube"):
+        st.session_state["input_mode"] = "youtube"
+        st.rerun()
+
+st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
 video_to_process = None
 
-with tab_upload:
+# Contenido según la opción seleccionada
+if st.session_state["input_mode"] == "upload":
     uploaded_file = st.file_uploader("Sube tu archivo de video (.mp4, .mov, .webm)", type=["mp4", "mov", "webm"])
     if uploaded_file is not None:
         video_to_process = uploaded_file
 
-with tab_record:
-    st.markdown("<p style='text-align: center; color: #9ca3af; font-size: 0.9rem;'>Haz clic en el botón de la cámara para grabar tu discurso directamente.</p>", unsafe_allow_html=True)
+elif st.session_state["input_mode"] == "record":
+    st.markdown("<p style='text-align: center; color: #9ca3af; font-size: 0.9rem;'>Usa tu cámara para grabar tu discurso directamente cuando estés listo.</p>", unsafe_allow_html=True)
     recorded_file = st.camera_input("Grabar discurso")
     if recorded_file is not None:
         video_to_process = recorded_file
 
-with tab_youtube:
+elif st.session_state["input_mode"] == "youtube":
     st.markdown("<p style='text-align: center; color: #9ca3af; font-size: 0.9rem;'>Pega el enlace de un discurso o presentación de YouTube:</p>", unsafe_allow_html=True)
     youtube_url = st.text_input("Enlace de YouTube", placeholder="https://www.youtube.com/watch?v=...")
     if youtube_url:
-        st.info("ℹ️ Nota: Para un análisis multimodal óptimo con IA nativa de archivos directos, te recomendamos usar las opciones de subida o grabación.")
+        st.info("ℹ️ Nota: Para un análisis multimodal óptimo, te recomendamos usar la opción de subir archivo o grabación directa.")
 
 # Si hay un archivo listo para procesar
 if video_to_process is not None:
