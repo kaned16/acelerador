@@ -88,13 +88,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# CARGA SEGURA DE LA API KEY DESDE LOS SECRETS (Evita que Google la banee por filtración)
+# CARGA SEGURA DE LA API KEY DESDE LOS SECRETS DE STREAMLIT
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
+    genai.configure(api_key=API_KEY)
 except Exception:
-    API_KEY = ""
-
-genai.configure(api_key=API_KEY)
+    st.error("⚠️ Configura tu GEMINI_API_KEY en los Secrets de Streamlit Cloud.")
 
 # Título y Subtítulo
 st.markdown("""
@@ -213,7 +212,7 @@ if video_to_process is not None:
                             pass
 
 else:
-    # 5 ÍTEMS PRINCIPALES (Puedes cambiar los textos aquí abajo cuando quieras)
+    # 5 ÍTEMS PRINCIPALES
     st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
     st.markdown("<h3 style='text-align: center; font-size: 1.1rem; color: #9ca3af; margin-bottom: 1rem;'>¿Qué evaluará nuestra IA en tu intervención?</h3>", unsafe_allow_html=True)
     
