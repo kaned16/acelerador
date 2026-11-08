@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import time
 import streamlit as st
@@ -205,7 +206,9 @@ if video_to_process is not None:
                     st.markdown(response.text)
                     
                 except Exception as e:
-                    st.error(f"Error de procesamiento: {str(e)}")
+                    # Proteccion estricta contra errores de codificacion de caracteres
+                    error_msg = str(e).encode('utf-8', errors='ignore').decode('utf-8')
+                    st.error(f"Error de procesamiento: {error_msg}")
                     
                 finally:
                     if remote_file:
