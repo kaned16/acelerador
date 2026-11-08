@@ -1,7 +1,8 @@
 import os
 import time
 import streamlit as st
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 # Configuración de la página, título y favicon oficial de Cuarto Espacio
 st.set_page_config(
@@ -88,11 +89,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# CARGA SEGURA DE LA API KEY DESDE LOS SECRETS DE STREAMLIT
+# INICIALIZACIÓN CON EL CLIENTE MODERNO DE GOOGLE (Soporta llaves de AI Studio y GCP/AQ)
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
-    genai.configure(api_key=API_KEY)
+    client = genai.Client(api_key=API_KEY)
 except Exception:
+    client = None
     st.error("⚠️ Configura tu GEMINI_API_KEY en los Secrets de Streamlit Cloud.")
 
 # Título y Subtítulo
@@ -155,23 +157,22 @@ if video_to_process is not None:
         st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
         if st.button("⚡ Iniciar Análisis con IA", key="btn_analizar"):
             with st.spinner("⏳ Subiendo video y analizando a profundidad con Gemini..."):
-                gemini_file = None
+                remote_file = None
                 try:
                     temp_path = os.path.join("/tmp", getattr(video_to_process, "name", "video_grabado.mp4"))
                     with open(temp_path, "wb") as f:
                         f.write(video_to_process.getbuffer())
 
-                    gemini_file = genai.upload_file(temp_path)
+                    # Subir archivo usando el cliente moderno
+                    remote_file = client.files.upload(file=temp_path)
                     
-                    while gemini_file.state.name == "PROCESSING":
+                    while remote_file.state.name == "PROCESSING":
                         time.sleep(2)
-                        gemini_file = genai.get_file(gemini_file.name)
+                        remote_file = client.files.get(name=remote_file.name)
                         
-                    if gemini_file.state.name != "ACTIVE":
+                    if remote_file.state.name != "ACTIVE":
                         raise Exception("El archivo no pudo ser procesado.")
 
-                    model = genai.GenerativeModel('gemini-2.5-flash')
-                    
                     prompt = """
                     Actúa como un estricto, riguroso y experto coach de oratoria ejecutiva de Cuarto Espacio. 
                     Realiza un análisis multimodal exhaustivo y profesional de este video. Tu evaluación debe estar estructurada exactamente con los siguientes apartados:
@@ -192,11 +193,14 @@ if video_to_process is not None:
                        - ¿Cómo arranca el gancho inicial? ¿Atrapa la atención?
                        - Estructura lógica del mensaje y fuerza del llamado a la acción (CTA) o cierre.
 
-                    5. 💡 **Recomendaciones Prácticas de Mejora Inmediata:**
-                       - Acciones concretas y tácticas que el orador debe aplicar de inmediato para elevar su nivel de impacto.
+                    5. 💡 **Conexión Emocional:**
+                       - Nivel de empatía, autenticidad y resonancia con la audiencia.
                     """
                     
-                    response = model.generate_content([gemini_file, prompt])
+                    response = client.models.generate_content(
+                        model='gemini-2.5-flash',
+                        contents=[remote_file, prompt]
+                    )
                     
                     st.markdown("### 📊 Reporte Completo del Coach de Oratoria")
                     st.markdown(response.text)
@@ -205,9 +209,9 @@ if video_to_process is not None:
                     st.error(f"❌ Error de procesamiento: {str(e)}")
                     
                 finally:
-                    if gemini_file:
+                    if remote_file:
                         try:
-                            genai.delete_file(gemini_file.name)
+                            client.files.delete(name=remote_file.name)
                         except:
                             pass
 
@@ -227,4 +231,4 @@ else:
     with col_i4:
         st.markdown("<div style='background-color: #111827; border: 1px solid #1f2937; padding: 1rem; border-radius: 0.75rem; text-align: center; height: 110px;'><div style='font-weight: 600; font-size: 0.85rem; color: #f9fafb;'>4. Estructura Pitch</div><div style='font-size: 0.7rem; color: #9ca3af; margin-top: 0.4rem;'>Gancho y persuasión</div></div>", unsafe_allow_html=True)
     with col_i5:
-        st.markdown("<div style='background-color: #111827; border: 1px solid #1f2937; padding: 1rem; border-radius: 0.75rem; text-align: center; height: 110px;'><div style='font-weight: 600; font-size: 0.85rem; color: #f9fafb;'>5. Coaching Práctico</div><div style='font-size: 0.7rem; color: #9ca3af; margin-top: 0.4rem;'>Tácticas de mejora</div></div>", unsafe_allow_html=True)
+        st.markdown("<div style='background-color: #111827; border: 1px solid #1f2937; padding: 1rem; border-radius: 0.75rem; text-align: center; height: 110px;'><div style='font-weight: 600; font-size: 0.85rem; color: #f9fafb;'>5. Conexión Emocional</div><div style='font-size: 0.7rem; color: #9ca3af; margin-top: 0.4rem;'>Empatía y resonancia</div></div>", unsafe_allow_html=True)
