@@ -28,6 +28,34 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# --- SISTEMA DE CONTRASEÑA (INTEGRADO CON HOTMART) ---
+PASSWORD_CORRECTA = "tu_clave_secreta_123"  # Cambia esto por la contraseña que darás en Hotmart
+
+def check_password():
+    def password_entered():
+        if st.session_state["password"] == PASSWORD_CORRECTA:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        st.markdown("# 🔒 Acceso Restringido")
+        st.markdown("Por favor, ingresa la contraseña de acceso que recibiste al comprar el programa en Hotmart.")
+        st.text_input("Contraseña de acceso:", type="password", on_change=password_entered, key="password")
+        return False
+    elif not st.session_state["password_correct"]:
+        st.markdown("# 🔒 Acceso Restringido")
+        st.text_input("Contraseña de acceso:", type="password", on_change=password_entered, key="password")
+        st.error("😕 Contraseña incorrecta. Inténtalo de nuevo.")
+        return False
+    else:
+        return True
+
+if not check_password():
+    st.stop()
+# ----------------------------------------------------
+
 API_KEY = "AIzaSyDLETiXyT5p3hrxzPBFo_UUNaIIpVUPb4U"
 genai.configure(api_key=API_KEY)
 
