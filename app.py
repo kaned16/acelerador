@@ -89,7 +89,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# INICIALIZACIÓN CON EL CLIENTE MODERNO DE GOOGLE (Soporta llaves de AI Studio y GCP/AQ)
+# CARGA SEGURA DE LA API KEY DESDE LOS SECRETS DE STREAMLIT
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
     client = genai.Client(api_key=API_KEY)
@@ -163,7 +163,6 @@ if video_to_process is not None:
                     with open(temp_path, "wb") as f:
                         f.write(video_to_process.getbuffer())
 
-                    # Subir archivo usando el cliente moderno
                     remote_file = client.files.upload(file=temp_path)
                     
                     while remote_file.state.name == "PROCESSING":
