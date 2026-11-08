@@ -160,7 +160,7 @@ if video_to_process is not None:
             with st.spinner("Subiendo video y analizando a profundidad con Gemini..."):
                 remote_file = None
                 try:
-                    # Limpiar el nombre del archivo para que no tenga caracteres especiales ni ellipsis (..)
+                    # Limpiar el nombre del archivo para que no tenga caracteres especiales
                     raw_name = getattr(video_to_process, "name", "video_grabado.mp4")
                     safe_filename = "".join(c for c in raw_name if ord(c) < 128 and c not in '/\\?%*:|"<>')
                     if not safe_filename:
@@ -203,8 +203,9 @@ if video_to_process is not None:
                        - Nivel de empatia, autenticidad y resonancia con la audiencia.
                     """
                     
+                    # ACTUALIZADO CON EL MODELO CORRECTO RECOMENDADO POR LA API
                     response = client.models.generate_content(
-                        model='gemini-2.5-flash',
+                        model='gemini-3.8-flash',
                         contents=[remote_file, prompt]
                     )
                     
@@ -212,7 +213,6 @@ if video_to_process is not None:
                     st.markdown(response.text)
                     
                 except Exception as e:
-                    # Forzar conversión estricta a caracteres puramente seguros para evitar error ascii codec
                     error_str = str(e)
                     clean_error = "".join(c if ord(c) < 128 else ' ' for c in error_str)
                     st.error(f"Error de procesamiento: {clean_error}")
