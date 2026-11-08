@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS avanzados para unificar la estética y centrar elementos
+# Estilos CSS avanzados idénticos a la referencia de diseño
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -99,8 +99,14 @@ st.markdown("""
 if "input_mode" not in st.session_state:
     st.session_state["input_mode"] = "upload"
 
-# Selector de opciones centrado horizontalmente con botones limpios tipo píldora
-col_space1, col_btn1, col_btn2, col_btn3, col_space2 = st.columns([1, 2, 2, 2, 1])
+# Selector de opciones con el contenedor de diseño idéntico al de la referencia
+st.markdown("""
+<div style="max-width: 38rem; margin: 0 auto 1.5rem auto; background-color: #111827; border: 1px solid #1f2937; border-radius: 1rem; padding: 0.35rem; display: flex; gap: 0.5rem;">
+</div>
+""", unsafe_allow_html=True)
+
+# Botones de selección distribuidos horizontalmente en columnas
+col_space1, col_btn1, col_btn2, col_btn3, col_space2 = st.columns([0.5, 2, 2, 2, 0.5])
 
 with col_btn1:
     if st.button("📁 Subir Archivo", key="btn_upload"):
@@ -117,11 +123,11 @@ with col_btn3:
         st.session_state["input_mode"] = "youtube"
         st.rerun()
 
-st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
 
 video_to_process = None
 
-# Contenido según la opción seleccionada
+# Contenido según la opción seleccionada con la estética de tarjeta oscura
 if st.session_state["input_mode"] == "upload":
     uploaded_file = st.file_uploader("Sube tu archivo de video (.mp4, .mov, .webm)", type=["mp4", "mov", "webm"])
     if uploaded_file is not None:
