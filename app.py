@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS avanzados para eliminar márgenes superiores y unificar la estética limpia
+# Estilos CSS avanzados para ajustar el tamaño del video y la estética general
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -21,9 +21,10 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* Eliminar padding superior predeterminado de Streamlit para subir el contenido */
+    /* Eliminar padding superior predeterminado de Streamlit */
     .block-container {
         padding-top: 1.5rem !important;
+        max-width: 50rem !important;
     }
     
     /* Ocultar elementos predeterminados */
@@ -56,7 +57,7 @@ st.markdown("""
         box-shadow: 0 15px 20px -3px rgba(124, 58, 237, 0.4) !important;
     }
     
-    /* Estilo para los File Uploaders y contenedores interactivos */
+    /* Estilo para los File Uploaders */
     div[data-testid="stFileUploader"] {
         background-color: #111827;
         border: 2px dashed #374151;
@@ -67,11 +68,23 @@ st.markdown("""
     div[data-testid="stFileUploader"]:hover {
         border-color: #8b5cf6;
     }
+    
+    /* RESTRINGIR EL TAMAÑO DEL PREVIEW DEL VIDEO */
+    div[data-testid="stVideo"] {
+        max-width: 400px;
+        margin: 0 auto;
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+    div[data-testid="stVideo"] video {
+        max-height: 300px;
+        object-fit: contain;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# ⚠️ COLOCA AQUÍ TU API KEY DE GOOGLE AI STUDIO
-API_KEY = "PEGA_AQUI_TU_NUEVA_API_KEY"
+# Configuración de la API Key de Gemini
+API_KEY = "AIzaSyDLETiXyT5p3hrxzPBFo_UUNaIIpVUPb4U"
 genai.configure(api_key=API_KEY)
 
 # Título y Subtítulo pegados arriba sin espacios sobrantes
