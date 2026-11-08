@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS avanzados basados en la estética oscura, moderna y minimalista solicitada
+# Estilos CSS avanzados para eliminar márgenes superiores y unificar la estética limpia
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -21,7 +21,12 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* Ocultar elementos predeterminados de Streamlit que rompen la estética limpia */
+    /* Eliminar padding superior predeterminado de Streamlit para subir el contenido */
+    .block-container {
+        padding-top: 1.5rem !important;
+    }
+    
+    /* Ocultar elementos predeterminados */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
@@ -65,13 +70,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ⚠️ COLOCA AQUÍ TU NUEVA API KEY GENERADA EN GOOGLE AI STUDIO
+# ⚠️ COLOCA AQUÍ TU API KEY DE GOOGLE AI STUDIO
 API_KEY = "PEGA_AQUI_TU_NUEVA_API_KEY"
 genai.configure(api_key=API_KEY)
 
-# Título y Subtítulo directos al inicio de la página
+# Título y Subtítulo pegados arriba sin espacios sobrantes
 st.markdown("""
-<div style="text-align: center; max-width: 48rem; margin: 1.5rem auto 1.5rem auto;">
+<div style="text-align: center; max-width: 48rem; margin: 0 auto 1.5rem auto;">
     <h2 style="font-size: 2rem; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 0.5rem;">Evalúa tu oratoria con precisión de experto</h2>
     <p style="color: #9ca3af; font-size: 0.95rem;">Sube un video de tu intervención para calcular automáticamente las marcas de tiempo exactas según su duración real.</p>
 </div>
@@ -124,15 +129,3 @@ if video_file is not None:
                         genai.delete_file(gemini_file.name)
                     except:
                         pass
-else:
-    st.markdown("""
-    <div style="background-color: #111827; border: 1px solid #1f2937; border-radius: 1rem; padding: 1rem; display: flex; align-items: center; justify-content: space-between; max-width: 48rem; margin: 1.5rem auto 0 auto;">
-        <div>
-            <div style="font-size: 0.75rem; font-weight: 600; color: #d1d5db;">¿Deseas probar una demostración inmediata?</div>
-            <div style="font-size: 0.6875rem; color: #6b7280;">Carga un video de prueba con sincronización perfecta</div>
-        </div>
-        <span style="background-color: #1f2937; color: #e5e7eb; font-size: 0.75rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 0.75rem; border: 1px solid #374151;">
-            Sube un video arriba 👆
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
