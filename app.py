@@ -3,10 +3,10 @@ import time
 import streamlit as st
 import google.generativeai as genai
 
-# Configuración de la página
+# Configuración de la página, título de la pestaña y favicon oficial de Cuarto Espacio
 st.set_page_config(
-    page_title="Gemini Speech & Persuasion AI",
-    page_icon="🎙️",
+    page_title="Cuarto Espacio | Simulador de Oratoria",
+    page_icon="https://cuartoespacio.co/wp-content/uploads/2021/04/cropped-favicon-1-32x32.png",
     layout="centered"
 )
 
@@ -31,7 +31,7 @@ st.markdown("""
 API_KEY = "AIzaSyDLETiXyT5p3hrxzPBFo_UUNaIIpVUPb4U"
 genai.configure(api_key=API_KEY)
 
-st.markdown("# 🎙️ Gemini Speech & Persuasion AI")
+st.markdown("# 🎙️ Cuarto Espacio | Análisis de Discurso con IA")
 st.markdown("### Simulador avanzado de oratoria, lenguaje corporal, modulación tonal y energía.")
 st.divider()
 
