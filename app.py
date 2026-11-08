@@ -2,7 +2,6 @@ import os
 import time
 import streamlit as st
 import google.generativeai as genai
-from st_supabase_connection import SupabaseConnection
 
 # Configuración de la página
 st.set_page_config(
@@ -11,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Estilos CSS modernos
+# Estilos CSS
 st.markdown("""
 <style>
     .stApp { background-color: #020617; color: #f8fafc; }
@@ -29,70 +28,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- CONFIGURACIÓN DE SUPABASE (AUTENTICACIÓN DE USUARIOS) ---
-# Nota: Asegúrate de agregar tus credenciales de Supabase en los "Secrets" de Streamlit Cloud
-try:
-    supabase = st.connection("supabase", type=SupabaseConnection)
-except Exception:
-    supabase = None
-
-def gestionar_autenticacion():
-    if "user" not in st.session_state:
-        st.session_state["user"] = None
-
-    if st.session_state["user"] is None:
-        st.markdown("# 🎙️ Acceso a la Plataforma")
-        tab1, tab2 = st.tabs(["🔑 Iniciar Sesión", "📝 Registrarse"])
-
-        with tab1:
-            st.subheader("Ingresa a tu cuenta")
-            correo_login = st.text_input("Correo electrónico", key="login_email")
-            pass_login = st.text_input("Contraseña", type="password", key="login_pass")
-            
-            if st.button("Entrar"):
-                if supabase and correo_login and pass_login:
-                    try:
-                        response = supabase.auth.sign_in_with_password({"email": correo_login, "password": pass_login})
-                        if response.user:
-                            st.session_state["user"] = response.user.email
-                            st.rerun()
-                    except Exception as e:
-                        st.error(f"Error al iniciar sesión: Verifícate o revisa tus credenciales.")
-                else:
-                    st.warning("Por favor completa todos los campos.")
-
-        with tab2:
-            st.subheader("Crea tu cuenta de alumno")
-            correo_reg = st.text_input("Correo electrónico", key="reg_email")
-            pass_reg = st.text_input("Crea una contraseña", type="password", key="reg_pass")
-            
-            if st.button("Registrarse"):
-                if supabase and correo_reg and pass_reg:
-                    try:
-                        response = supabase.auth.sign_up({"email": correo_reg, "password": pass_reg})
-                        st.success("¡Cuenta creada con éxito! Ya puedes iniciar sesión en la pestaña de al lado.")
-                    except Exception as e:
-                        st.error(f"No se pudo registrar el usuario. Es posible que el correo ya esté en uso.")
-                else:
-                    st.warning("Por favor completa todos los campos.")
-        return False
-    return True
-
-if not gestionar_autenticacion():
-    st.stop()
-
-# --- APLICACIÓN PRINCIPAL (VISIBLE SOLO PARA USUARIOS LOGUEADOS) ---
 API_KEY = "AIzaSyDLETiXyT5p3hrxzPBFo_UUNaIIpVUPb4U"
 genai.configure(api_key=API_KEY)
 
-col1, col2 = st.columns([8, 2])
-with col1:
-    st.markdown("# 🎙️ Gemini Speech & Persuasion AI")
-with col2:
-    if st.button("Cerrar Sesión"):
-        st.session_state["user"] = None
-        st.rerun()
-
+st.markdown("# 🎙️ Gemini Speech & Persuasion AI")
 st.markdown("### Simulador avanzado de oratoria, lenguaje corporal, modulación tonal y energía.")
 st.divider()
 
@@ -110,8 +49,10 @@ if video_file is not None:
                 with open(temp_path, "wb") as f:
                     f.write(video_file.getbuffer())
 
+                # Subir archivo usando File API de Gemini
                 gemini_file = genai.upload_file(temp_path)
                 
+                # Esperar a que esté activo
                 while gemini_file.state.name == "PROCESSING":
                     time.sleep(2)
                     gemini_file = genai.get_file(gemini_file.name)
