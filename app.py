@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS avanzados
+# Estilos CSS avanzados (Forzando la fila horizontal para los botones en movil y desktop)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -38,14 +38,28 @@ st.markdown("""
         font-weight: 700;
     }
     
+    /* Forzar que las 3 columnas de los botones esten siempre en una sola fila horizontal */
+    div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 0.5rem;
+    }
+    
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        width: 33.33% !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+    
     div.stButton > button {
         background-color: #111827 !important;
         color: #9ca3af !important;
         border: 1px solid #1f2937 !important;
         border-radius: 0.75rem !important;
         font-weight: 600 !important;
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.85rem !important;
+        padding: 0.5rem 0.25rem !important;
+        font-size: 0.8rem !important;
         box-shadow: none !important;
         transition: all 0.2s ease !important;
         width: 100%;
@@ -56,14 +70,6 @@ st.markdown("""
         background-color: #1f2937 !important;
         color: #ffffff !important;
         border-color: #374151 !important;
-    }
-
-    div.stButton.analizar-btn > button {
-        background: linear-gradient(to right, #7c3aed, #8b5cf6) !important;
-        color: white !important;
-        border: none !important;
-        padding: 0.75rem 1.5rem !important;
-        font-size: 1rem !important;
     }
 
     div[data-testid="stFileUploader"] {
@@ -160,7 +166,6 @@ if video_to_process is not None:
             with st.spinner("Subiendo video y analizando a profundidad con Gemini..."):
                 remote_file = None
                 try:
-                    # Limpiar el nombre del archivo para que no tenga caracteres especiales
                     raw_name = getattr(video_to_process, "name", "video_grabado.mp4")
                     safe_filename = "".join(c for c in raw_name if ord(c) < 128 and c not in '/\\?%*:|"<>')
                     if not safe_filename:
@@ -197,13 +202,12 @@ if video_to_process is not None:
 
                     4. Estructura del Pitch, Discurso y Nivel de Persuasiuon:
                        - Como arranca el gancho inicial? Atrapa la atencion?
-                       - Estructura logica del mensaje y fuerza del llamado a la accion (CTA) o cierre.
+                       - Estructura logica del mensaje y fuerza del llamado a la acción (CTA) o cierre.
 
                     5. Conexion Emocional:
                        - Nivel de empatia, autenticidad y resonancia con la audiencia.
                     """
                     
-                    # ACTUALIZADO CON EL MODELO CORRECTO RECOMENDADO POR LA API
                     response = client.models.generate_content(
                         model='gemini-3.8-flash',
                         contents=[remote_file, prompt]
