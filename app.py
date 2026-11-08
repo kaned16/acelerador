@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS avanzados idénticos a la referencia de diseño
+# Estilos CSS avanzados para personalizar los botones y unificar la estética oscura
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -39,24 +39,25 @@ st.markdown("""
         font-weight: 700;
     }
     
-    /* Botones principales personalizados con gradiente morado de marca */
-    .stButton>button {
-        background: linear-gradient(to right, #7c3aed, #8b5cf6) !important;
-        color: white !important;
-        border: none !important;
+    /* ESTILIZAR LOS BOTONES DE SELECCIÓN PARA QUE SE VEAN OSCUROS Y ELEGANTES */
+    div.stButton > button {
+        background-color: #111827 !important;
+        color: #9ca3af !important;
+        border: 1px solid #1f2937 !important;
         border-radius: 0.75rem !important;
         font-weight: 600 !important;
-        padding: 0.6rem 1.2rem !important;
-        box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3) !important;
-        transition: all 0.3s ease !important;
+        padding: 0.6rem 1rem !important;
+        box-shadow: none !important;
+        transition: all 0.2s ease !important;
         width: 100%;
     }
     
-    .stButton>button:hover {
-        opacity: 0.9 !important;
-        box-shadow: 0 15px 20px -3px rgba(124, 58, 237, 0.4) !important;
+    div.stButton > button:hover {
+        background-color: #1f2937 !important;
+        color: #ffffff !important;
+        border-color: #374151 !important;
     }
-    
+
     /* Estilo para los File Uploaders */
     div[data-testid="stFileUploader"] {
         background-color: #111827;
@@ -99,14 +100,8 @@ st.markdown("""
 if "input_mode" not in st.session_state:
     st.session_state["input_mode"] = "upload"
 
-# Selector de opciones con el contenedor de diseño idéntico al de la referencia
-st.markdown("""
-<div style="max-width: 38rem; margin: 0 auto 1.5rem auto; background-color: #111827; border: 1px solid #1f2937; border-radius: 1rem; padding: 0.35rem; display: flex; gap: 0.5rem;">
-</div>
-""", unsafe_allow_html=True)
-
-# Botones de selección distribuidos horizontalmente en columnas
-col_space1, col_btn1, col_btn2, col_btn3, col_space2 = st.columns([0.5, 2, 2, 2, 0.5])
+# Botones de selección distribuidos horizontalmente en columnas con diseño unificado
+col_space1, col_btn1, col_btn2, col_btn3, col_space2 = st.columns([1, 2, 2, 2, 1])
 
 with col_btn1:
     if st.button("📁 Subir Archivo", key="btn_upload"):
@@ -123,11 +118,11 @@ with col_btn3:
         st.session_state["input_mode"] = "youtube"
         st.rerun()
 
-st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
 video_to_process = None
 
-# Contenido según la opción seleccionada con la estética de tarjeta oscura
+# Contenido según la opción seleccionada
 if st.session_state["input_mode"] == "upload":
     uploaded_file = st.file_uploader("Sube tu archivo de video (.mp4, .mov, .webm)", type=["mp4", "mov", "webm"])
     if uploaded_file is not None:
