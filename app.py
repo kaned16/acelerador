@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS avanzados para la estética limpia y moderna
+# Estilos CSS avanzados para unificar la estética y centrar las pestañas horizontalmente
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -21,7 +21,7 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* Eliminar padding superior predeterminado de Streamlit */
+    /* Eliminar padding superior predeterminado */
     .block-container {
         padding-top: 1.5rem !important;
         max-width: 55rem !important;
@@ -69,7 +69,34 @@ st.markdown("""
         border-color: #8b5cf6;
     }
     
-    /* RESTRINGIR EL TAMAÑO DEL PREVIEW DEL VIDEO */
+    /* CENTRAR LAS PESTAÑAS HORIZONTALMENTE Y DARLES ESTILO OSCURO */
+    div[data-baseweb="tab-list"] {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        background-color: #111827;
+        padding: 0.5rem;
+        border-radius: 1rem;
+        border: 1px solid #1f2937;
+        margin-bottom: 1.5rem;
+    }
+    
+    div[data-baseweb="tab"] {
+        background-color: transparent !important;
+        border-radius: 0.75rem !important;
+        color: #9ca3af !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        padding: 0.5rem 1.25rem !important;
+    }
+    
+    div[data-testid="stacionales"] div[data-baseweb="tab"] [aria-selected="true"],
+    div[data-baseweb="tab"][aria-selected="true"] {
+        background-color: #1f2937 !important;
+        color: #ffffff !important;
+    }
+
+    /* Restringir tamaño del preview del video */
     div[data-testid="stVideo"] {
         max-width: 400px;
         margin: 0 auto;
@@ -95,7 +122,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Pestañas de Selección de Entrada
+# Pestañas de Selección de Entrada (Centradas horizontalmente con CSS)
 tab_upload, tab_record, tab_youtube = st.tabs(["📁 Subir Archivo", "🎥 Grabar Video", "▶️ Enlace de YouTube"])
 
 video_to_process = None
@@ -106,18 +133,18 @@ with tab_upload:
         video_to_process = uploaded_file
 
 with tab_record:
-    st.markdown("### Graba tu intervención directamente:")
-    recorded_file = st.camera_input("Usa tu cámara para grabar un discurso corto")
+    st.markdown("<p style='text-align: center; color: #9ca3af; font-size: 0.9rem;'>Haz clic en el botón de la cámara para grabar tu discurso directamente.</p>", unsafe_allow_html=True)
+    recorded_file = st.camera_input("Grabar discurso")
     if recorded_file is not None:
         video_to_process = recorded_file
 
 with tab_youtube:
-    st.markdown("### Análisis de Discursos de YouTube:")
-    youtube_url = st.text_input("Pega el enlace del video de YouTube (ej. TED Talk, presentación):")
+    st.markdown("<p style='text-align: center; color: #9ca3af; font-size: 0.9rem;'>Pega el enlace de un discurso o presentación de YouTube:</p>", unsafe_allow_html=True)
+    youtube_url = st.text_input("Enlace de YouTube", placeholder="https://www.youtube.com/watch?v=...")
     if youtube_url:
-        st.info("ℹ️ Nota: Para videos de YouTube directamente con enlace, asegúrate de utilizar un archivo descargado o usa las opciones de subida si el servidor requiere procesamiento multimodal nativo de archivos directos.")
+        st.info("ℹ️ Nota: Para un análisis multimodal óptimo con IA nativa de archivos directos, te recomendamos usar las opciones de subida o grabación.")
 
-# Si hay un archivo de video listo para procesar (subido o grabado)
+# Si hay un archivo listo para procesar
 if video_to_process is not None:
     st.video(video_to_process)
     
