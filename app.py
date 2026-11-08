@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS avanzados para maquetar el reproductor pequeño al lado del botón y las tarjetas de los 5 ítems
+# Estilos CSS avanzados
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -21,25 +21,21 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* Eliminar padding superior predeterminado */
     .block-container {
         padding-top: 1.5rem !important;
         max-width: 55rem !important;
     }
     
-    /* Ocultar elementos predeterminados de Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Estilos de tipografía y títulos */
     h1, h2, h3 {
         color: #f9fafb !important;
         font-family: 'Inter', sans-serif;
         font-weight: 700;
     }
     
-    /* Estilizar los botones de navegación superiores */
     div.stButton > button {
         background-color: #111827 !important;
         color: #9ca3af !important;
@@ -60,7 +56,6 @@ st.markdown("""
         border-color: #374151 !important;
     }
 
-    /* Botón principal de análisis con gradiente */
     div.stButton.analizar-btn > button {
         background: linear-gradient(to right, #7c3aed, #8b5cf6) !important;
         color: white !important;
@@ -69,7 +64,6 @@ st.markdown("""
         font-size: 1rem !important;
     }
 
-    /* Estilo para los File Uploaders */
     div[data-testid="stFileUploader"] {
         background-color: #111827;
         border: 2px dashed #374151;
@@ -81,7 +75,6 @@ st.markdown("""
         border-color: #8b5cf6;
     }
 
-    /* RESTRINGIR EL TAMAÑO DEL PREVIEW DEL VIDEO A UN CUADRITO PEQUEÑO */
     div[data-testid="stVideo"] {
         max-width: 240px;
         border-radius: 0.75rem;
@@ -95,11 +88,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Configuración segura de la API Key desde los Secrets de Streamlit Cloud
+# CARGA SEGURA DE LA API KEY DESDE LOS SECRETS (Evita que Google la banee por filtración)
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
 except Exception:
-    API_KEY = "AIzaSyDLETiXyT5p3hrxzPBFo_UUNaIIpVUPb4U"
+    API_KEY = ""
 
 genai.configure(api_key=API_KEY)
 
@@ -111,11 +104,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Control de estado para las opciones de entrada
 if "input_mode" not in st.session_state:
     st.session_state["input_mode"] = "upload"
 
-# Renderizar los 3 botones en línea horizontal sin emojis
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -137,7 +128,6 @@ st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
 
 video_to_process = None
 
-# Contenido según la opción seleccionada
 if st.session_state["input_mode"] == "upload":
     uploaded_file = st.file_uploader("Sube tu archivo de video (.mp4, .mov, .webm)", type=["mp4", "mov", "webm"])
     if uploaded_file is not None:
@@ -155,7 +145,6 @@ elif st.session_state["input_mode"] == "youtube":
     if youtube_url:
         st.info("ℹ️ Nota: Para un análisis multimodal óptimo, te recomendamos usar la opción de subir archivo o grabación directa.")
 
-# Si hay un archivo listo para procesar: Cuadrito de video a la izquierda y botón de analizar al lado
 if video_to_process is not None:
     st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
     col_vid, col_btn = st.columns([1, 2])
@@ -224,7 +213,7 @@ if video_to_process is not None:
                             pass
 
 else:
-    # 5 ÍTEMS PRINCIPALES DE LO QUE ANALIZA LA IA (Se muestran antes de subir el video)
+    # 5 ÍTEMS PRINCIPALES (Puedes cambiar los textos aquí abajo cuando quieras)
     st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
     st.markdown("<h3 style='text-align: center; font-size: 1.1rem; color: #9ca3af; margin-bottom: 1rem;'>¿Qué evaluará nuestra IA en tu intervención?</h3>", unsafe_allow_html=True)
     
