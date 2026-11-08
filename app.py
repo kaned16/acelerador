@@ -1,17 +1,16 @@
 import os
 import time
-import unicodedata
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 
-# Configuración de la página en modo oscuro
+# Configuración de la página
 st.set_page_config(
     page_title="Gemini Speech & Persuasion AI",
     page_icon="🎙️",
     layout="centered"
 )
 
-# Estilos CSS personalizados para mantener la estética SaaS moderna
+# Estilos CSS
 st.markdown("""
 <style>
     .stApp { background-color: #020617; color: #f8fafc; }
@@ -25,25 +24,17 @@ st.markdown("""
         width: 100%;
         padding: 0.6rem;
     }
-    .stButton>button:hover {
-        opacity: 0.9;
-    }
+    .stButton>button:hover { opacity: 0.9; }
 </style>
 """, unsafe_allow_html=True)
 
 API_KEY = "AIzaSyDLETiXyT5p3hrxzPBFo_UUNaIIpVUPb4U"
-client = genai.Client(api_key=API_KEY)
+genai.configure(api_key=API_KEY)
 
-def limpiar_nombre(nombre):
-    nfkd_form = unicodedata.normalize('NFKD', nombre)
-    return "".join([c for c in nfkd_form if not unicodedata.combining(c)])
-
-# Cabecera
 st.markdown("# 🎙️ Gemini Speech & Persuasion AI")
 st.markdown("### Simulador avanzado de oratoria, lenguaje corporal, modulación tonal y energía.")
 st.divider()
 
-# Sección de Carga de Video
 st.markdown("### 📥 Sube tu Discurso en Video")
 video_file = st.file_uploader("Sube tu archivo de video (.mp4, .mov, .webm)", type=["mp4", "mov", "webm"])
 
@@ -51,39 +42,35 @@ if video_file is not None:
     st.video(video_file)
     
     if st.button("⚡ Iniciar Análisis con IA"):
-        with st.spinner("⏳ Subiendo video y analizando con Gemini (esto puede tomar unos segundos)..."):
+        with st.spinner("⏳ Subiendo video y analizando con Gemini..."):
             gemini_file = None
             try:
-                # Guardar temporalmente el archivo subido
-                temp_path = os.path.join("/tmp", limpiar_nombre(video_file.name))
+                temp_path = os.path.join("/tmp", video_file.name)
                 with open(temp_path, "wb") as f:
                     f.write(video_file.getbuffer())
 
-                # Subir a Gemini
-                gemini_file = client.files.upload(file=temp_path)
+                # Subir archivo usando File API de Gemini
+                gemini_file = genai.upload_file(temp_path)
                 
-                # Esperar estado activo
+                # Esperar a que esté activo
                 while gemini_file.state.name == "PROCESSING":
                     time.sleep(2)
-                    gemini_file = client.files.get(name=gemini_file.name)
+                    gemini_file = genai.get_file(gemini_file.name)
                     
                 if gemini_file.state.name != "ACTIVE":
-                    raise Exception("El archivo no pudo ser procesado por los servidores.")
+                    raise Exception("El archivo no pudo ser procesado.")
 
+                model = genai.GenerativeModel('gemini-2.5-flash')
+                
                 prompt = """
                 Actúa como un estricto y experto coach de oratoria ejecutiva. 
-                Analiza detalladamente este video y entrégame un reporte estructurado, limpio y elegante evaluando estrictamente tres pilares de mejora inmediata:
-                1. 🦾 **Lenguaje Corporal y Postura:** Gestos de manos, apertura de hombros, expresión facial y contacto visual.
-                2. 🎵 **Variación de Tonalidad:** Modulación de voz, inflexiones y uso de pausas enfáticas frente a monotonía.
+                Analiza detalladamente este video y entrégame un reporte estructurado y elegante evaluando tres pilares de mejora inmediata:
+                1. 🦾 **Lenguaje Corporal y Postura:** Gestos de manos, apertura de hombros y expresión facial.
+                2. 🎵 **Variación de Tonalidad:** Modulación de voz, inflexiones y uso de pausas enfáticas.
                 3. ⚡ **Nivel de Energía y Proyección:** Fuerza, dinamismo y convicción al transmitir el mensaje.
-
-                Usa un tono profesional, directo, constructivo y señala específicamente qué corregir.
                 """
                 
-                response = client.models.generate_content(
-                    model='gemini-2.5-flash',
-                    contents=[gemini_file, prompt]
-                )
+                response = model.generate_content([gemini_file, prompt])
                 
                 st.markdown("### 📊 Reporte del Coach Gemini")
                 st.markdown(response.text)
@@ -94,7 +81,7 @@ if video_file is not None:
             finally:
                 if gemini_file:
                     try:
-                        client.files.delete(name=gemini_file.name)
+                        genai.delete_file(gemini_file.name)
                     except:
                         pass
 else:
